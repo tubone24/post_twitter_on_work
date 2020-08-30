@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "taskName": "Run",
+  "command": "nimble",
+  "args": [
+    "build",
+    "-d:ssl"
+  ],
+  "options": {
+    "cwd": "${workspaceRoot}"
+  },
+  "type": "shell",
+  "group": {
+    "kind": "build",
+    "isDefault": true
+  }
+}
