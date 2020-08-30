@@ -6,5 +6,5 @@ env.load()
 
 when isMainModule:
   let tw = newTwitter(getEnv("appKey"), getEnv("appKeySecret"), getEnv("accessToken"), getEnv("accessTokenSecret"))
-  discard tw.auth()
   echo tw.bearerToken
+  echo tw.getTimeline()

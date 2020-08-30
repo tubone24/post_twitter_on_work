@@ -1,9 +1,8 @@
 # Package
 
-packageName   = "post_twitter_on_work"
 version       = "0.1.0"
 author        = "tubone24"
-description   = "Twitter on work"
+description   = "Watch Twitter on work"
 license       = "MIT"
 srcDir        = "src"
 binDir        = "bin"
@@ -13,11 +12,6 @@ bin           = @["post_twitter_on_work"]
 
 
 # Dependencies
-
-requires "nim >= 0.20.2"
+requires "nim >= 1.0.0"
 requires "dotenv >= 1.1.0"
-
-task run, "running":
-  exec "nimble build"
-  exec "bin/" & packageName & " nim"
-
+requires "oauth >= 0.10"
