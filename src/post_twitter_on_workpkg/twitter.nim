@@ -14,6 +14,12 @@ type
     accessToken:string
     accessTokenSecret:string
     bearerToken*: string
+    tweets*: JsonNode
+  Tweet* = ref object of RootObj
+    createdAt*: string
+    text*: string
+    screenName*: string
+
 
 proc parseResponseBody(body: string): Table[string, string] =
   let responses = body.split("&")
@@ -35,19 +41,21 @@ proc getBearerToken(apiKey:string, apiSecret:string):string =
   return bearerToken
 
 proc getAccessToken(apiKey:string, apiSecret:string):Table[string, string] =
-  let client = newHttpClient()
-  let requestTokenResponse = client.getOAuth1RequestToken(requestTokenUrl, apiKey, apiSecret, isIncludeVersionToHeader = true)
-  let requestTokenBody = parseResponseBody(requestTokenResponse.body)
-  let requestToken = requestTokenBody["oauth_token"]
-  let requestTokenSecret = requestTokenBody["oauth_token_secret"]
+  let
+    client = newHttpClient()
+    requestTokenResponse = client.getOAuth1RequestToken(requestTokenUrl, apiKey, apiSecret, isIncludeVersionToHeader = true)
+    requestTokenBody = parseResponseBody(requestTokenResponse.body)
+    requestToken = requestTokenBody["oauth_token"]
+    requestTokenSecret = requestTokenBody["oauth_token_secret"]
   echo "Access the url, please obtain the verifier key."
   echo getAuthorizeUrl(authorizeUrl, requestToken)
   echo "Please enter a verifier key (PIN code)."
-  let verifier = readLine stdin
-  let accessTokenResponse = client.getOAuth1AccessToken(accessTokenUrl, apiKey, apiSecret, requestToken, requestTokenSecret, verifier, isIncludeVersionToHeader = true)
-  let accessTokenResponseBody = parseResponseBody(accessTokenResponse.body)
-  let accessToken = accessTokenResponseBody["oauth_token"]
-  let accessTokenSecret = accessTokenResponseBody["oauth_token_secret"]
+  let
+    verifier = readLine stdin
+    accessTokenResponse = client.getOAuth1AccessToken(accessTokenUrl, apiKey, apiSecret, requestToken, requestTokenSecret, verifier, isIncludeVersionToHeader = true)
+    accessTokenResponseBody = parseResponseBody(accessTokenResponse.body)
+    accessToken = accessTokenResponseBody["oauth_token"]
+    accessTokenSecret = accessTokenResponseBody["oauth_token_secret"]
   result = initTable[string, string]()
   result["accessToken"]  = accessToken
   result["accessTokenSecret"]  = accessTokenSecret
@@ -65,8 +73,16 @@ proc newTwitter*(apiKey:string, apiSecret:string, accessToken:string, accessToke
   tw.bearerToken = getBearerToken(tw.apiKey, tw.apiSecret)
   return tw
 
-proc getTimeline*(tw:Twitter):string =
+proc getTimeline*(tw:Twitter):JsonNode =
   let client = newHttpClient()
   let timeline = client.oAuth1Request(homeTimelineEndpoint, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
-  echo timeline.body
+  tw.tweets = parseJson(timeline.body)
+
+iterator getTweetIter*(tw:Twitter):Tweet =
+  for tweet in tw.tweets:
+    let tweetObj = new Tweet
+    tweetObj.createdAt = tweet["created_at"].getStr()
+    tweetObj.text = tweet["text"].getStr()
+    tweetObj.screenName = tweet["user"]["screen_name"].getStr()
+    yield tweetObj
 

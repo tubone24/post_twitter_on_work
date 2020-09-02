@@ -7,4 +7,7 @@ env.load()
 when isMainModule:
   let tw = newTwitter(getEnv("appKey"), getEnv("appKeySecret"), getEnv("accessToken"), getEnv("accessTokenSecret"))
   echo tw.bearerToken
-  echo tw.getTimeline()
+  let tweets = tw.getTimeline()
+  for tweet in tw.getTweetIter():
+    echo tweet.text
+    echo tweet.screenName
