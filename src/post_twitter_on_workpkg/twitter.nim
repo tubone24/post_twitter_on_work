@@ -5,6 +5,7 @@ const
     authorizeUrl = "https://api.twitter.com/oauth/authorize"
     accessTokenUrl = "https://api.twitter.com/oauth/access_token"
     homeTimelineEndpoint = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+    trendEndpoint = "https://api.twitter.com/1.1/trends/place.json"
     authEndpoint = "https://api.twitter.com/oauth2/token"
 
 type
@@ -18,6 +19,8 @@ type
   Tweet* = ref object of RootObj
     createdAt*: string
     text*: string
+    name*: string
+    profileImageUrlHttps*: string
     screenName*: string
 
 
@@ -84,5 +87,7 @@ iterator getTweetIter*(tw:Twitter):Tweet =
     tweetObj.createdAt = tweet["created_at"].getStr()
     tweetObj.text = tweet["text"].getStr()
     tweetObj.screenName = tweet["user"]["screen_name"].getStr()
+    tweetObj.name = tweet["user"]["name"].getStr()
+    tweetObj.profileImageUrlHttps = tweet["user"]["profile_image_url_https"].getStr()
     yield tweetObj
 
