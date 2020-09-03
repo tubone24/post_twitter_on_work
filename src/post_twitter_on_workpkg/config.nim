@@ -2,11 +2,17 @@ import os, parsecfg, strutils, streams
 
 type
   Config* = ref object of RootObj
-    appKey: string
-    appKeySecret: string
-    accessToken: string
-    accessTokenSecret: string
+    appKey*: string
+    appKeySecret*: string
+    accessToken*: string
+    accessTokenSecret*: string
 
-proc getConfig():
-   let cfg = loadConfig("settings.cfg")
+proc getConfig*():Config =
+ let cfg = loadConfig("settings.cfg")
+ let result = new Config
+ result.appKey = cfg.getSectionValue("auth", "appKey")
+ result.appKeySecret = cfg.getSectionValue("auth", "appKeySecret")
+ result.accessToken = cfg.getSectionValue("auth", "accessToken")
+ result.accessTokenSecret = cfg.getSectionValue("auth", "accessTokenSecret")
+ return result
 

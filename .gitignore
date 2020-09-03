@@ -4,3 +4,4 @@ htmldocs/
 .env
 bin
 .idea
+settings.cfg
