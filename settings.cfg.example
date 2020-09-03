@@ -1,0 +1,5 @@
+[auth]
+appKey="xxxxxx"
+appKeySecret="xxxxxxxxxxxxxxxx"
+accessToken="xxxxxxxxxxxxxx"
+accessTokenSecret="xxxxxxx"
