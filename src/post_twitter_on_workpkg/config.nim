@@ -9,10 +9,9 @@ type
 
 proc getConfig*():Config =
  let cfg = loadConfig("settings.cfg")
- let result = new Config
+ result = new Config
  result.appKey = cfg.getSectionValue("auth", "appKey")
  result.appKeySecret = cfg.getSectionValue("auth", "appKeySecret")
  result.accessToken = cfg.getSectionValue("auth", "accessToken")
  result.accessTokenSecret = cfg.getSectionValue("auth", "accessTokenSecret")
- return result
 
