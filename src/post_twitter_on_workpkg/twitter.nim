@@ -4,7 +4,7 @@ const
     requestTokenUrl = "https://api.twitter.com/oauth/request_token"
     authorizeUrl = "https://api.twitter.com/oauth/authorize"
     accessTokenUrl = "https://api.twitter.com/oauth/access_token"
-    homeTimelineEndpoint = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+    homeTimelineEndpoint = "https://api.twitter.com/1.1/statuses/home_timeline.json?count=200"
     trendEndpoint = "https://api.twitter.com/1.1/trends/place.json"
     authEndpoint = "https://api.twitter.com/oauth2/token"
 
@@ -79,7 +79,11 @@ proc newTwitter*(apiKey:string, apiSecret:string, accessToken:string, accessToke
 proc getTimeline*(tw:Twitter):JsonNode =
   let client = newHttpClient()
   let timeline = client.oAuth1Request(homeTimelineEndpoint, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
-  tw.tweets = parseJson(timeline.body)
+  try:
+    tw.tweets = parseJson(timeline.body)
+  except JsonParsingError:
+    echo timeline.headers
+    echo timeline.body
 
 iterator getTweetIter*(tw:Twitter):Tweet =
   for tweet in tw.tweets:
