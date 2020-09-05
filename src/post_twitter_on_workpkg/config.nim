@@ -1,4 +1,4 @@
-import os, parsecfg, strutils, streams
+import parsecfg
 
 type
   Config* = ref object of RootObj

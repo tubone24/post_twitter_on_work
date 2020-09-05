@@ -11,3 +11,8 @@ when isMainModule:
   let tweets = tw.getTimeline()
   for tweet in tw.getTweetIter():
     formatTweet(tweet)
+  while true:
+    sleep(1000*60)
+    let tweets = tw.getTimeline(tw.sinceId)
+    for tweet in tw.getTweetIter():
+      formatTweet(tweet)

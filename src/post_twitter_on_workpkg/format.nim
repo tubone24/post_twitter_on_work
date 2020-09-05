@@ -1,4 +1,4 @@
-import strutils, pegs, unicode, times, twitter
+import strutils, unicode, times, twitter
 
 proc wrapWords*(str: string, wrapLen: int = 100): string =
   let rune = str.toRunes
@@ -11,10 +11,10 @@ proc wrapWords*(str: string, wrapLen: int = 100): string =
   return $wrappedWord
 
 proc dateFormat*(str: string): string =
-  result = str.parse("ddd MMM d HH:mm:ss zz YYYY").format("yyyy/MM/dd HH:mm:ss")
+  result = str.parse("ddd MMM d HH:mm:ss zz'00' YYYY").format("yyyy/MM/dd HH:mm:ss")
 
 proc formatTweet*(tweet: Tweet) =
   block:
-    let header = tweet.name & "(" & tweet.screenName & ") at" & tweet.createdAt
+    let header = tweet.name & "(" & tweet.screenName & ") at " & dateFormat(tweet.createdAt)
     echo header
     echo indent(wrapWords(tweet.text), 4)

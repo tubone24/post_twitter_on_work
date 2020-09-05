@@ -16,6 +16,7 @@ type
     accessTokenSecret:string
     bearerToken*: string
     tweets*: JsonNode
+    sinceId*: string
   Tweet* = ref object of RootObj
     createdAt*: string
     text*: string
@@ -76,9 +77,14 @@ proc newTwitter*(apiKey:string, apiSecret:string, accessToken:string, accessToke
   tw.bearerToken = getBearerToken(tw.apiKey, tw.apiSecret)
   return tw
 
-proc getTimeline*(tw:Twitter):JsonNode =
+proc getTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
   let client = newHttpClient()
-  let timeline = client.oAuth1Request(homeTimelineEndpoint, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  var url: string
+  if sinceId == "":
+    url = homeTimelineEndpoint
+  else:
+    url = homeTimelineEndpoint & "&since_id=" & sinceId
+  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.tweets = parseJson(timeline.body)
   except JsonParsingError:
@@ -86,12 +92,12 @@ proc getTimeline*(tw:Twitter):JsonNode =
     echo timeline.body
 
 iterator getTweetIter*(tw:Twitter):Tweet =
-  for tweet in tw.tweets:
+  for i in countdown(tw.tweets.len - 1, 0):
     let tweetObj = new Tweet
-    tweetObj.createdAt = tweet["created_at"].getStr()
-    tweetObj.text = tweet["text"].getStr()
-    tweetObj.screenName = tweet["user"]["screen_name"].getStr()
-    tweetObj.name = tweet["user"]["name"].getStr()
-    tweetObj.profileImageUrlHttps = tweet["user"]["profile_image_url_https"].getStr()
+    tweetObj.createdAt = tw.tweets[i]["created_at"].getStr()
+    tweetObj.text = tw.tweets[i]["text"].getStr()
+    tweetObj.screenName = tw.tweets[i]["user"]["screen_name"].getStr()
+    tweetObj.name = tw.tweets[i]["user"]["name"].getStr()
+    tweetObj.profileImageUrlHttps = tw.tweets[i]["user"]["profile_image_url_https"].getStr()
+    tw.sinceId = tw.tweets[i]["id_str"].getStr()
     yield tweetObj
-
