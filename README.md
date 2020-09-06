@@ -13,6 +13,16 @@ $ nimble install -d
 $ nimble build
 ```
 
+And create `settings.cfg` file, fill out Twitter Keys
+
+```
+[auth]
+appKey="xxxxxx"
+appKeySecret="xxxxxxxxxxxxxxxx"
+accessToken="xxxxxxxxxxxxxx"
+accessTokenSecret="xxxxxxx"
+```
+
 ## Release Build
 
 If you would like to optimize build.
