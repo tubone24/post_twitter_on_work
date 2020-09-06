@@ -120,7 +120,7 @@ proc main() =
     let
       conf = getConfig()
       tw = newTwitter(conf.appKey, conf.appKeySecret, conf.accessToken, conf.accessTokenSecret)
-    tw.postTweet($args["<text>"])
+    echo(tw.postTweet($args["<text>"]))
 
 when isMainModule:
   main()

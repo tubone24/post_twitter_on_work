@@ -189,12 +189,11 @@ iterator getTrendsIter*(tw:Twitter):Trend =
     trendObj.tweetVolume = tw.trends["trends"][i]["tweet_volume"].getInt()
     yield trendObj
 
-proc postTweet*(tw:Twitter, text: string) {.discardable.} =
+proc postTweet*(tw:Twitter, text: string): string {.discardable.} =
   let client = newHttpClient()
   let url = updateTweetEndpoint & "?status=" & encodeUrl(text)
   let resp = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true, httpMethod = HttpPost)
   if resp.status == "200 OK":
-    echo("Success Post")
+    return "Success Post"
   else:
-    echo("Failed Post")
-    echo(resp.status)
+    return resp.status
