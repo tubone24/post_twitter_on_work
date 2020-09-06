@@ -1,10 +1,12 @@
-import httpclient, json, base64, tables, oauth1, strutils
+import httpclient, json, base64, tables, oauth1, strutils, config
 
 const
     requestTokenUrl = "https://api.twitter.com/oauth/request_token"
     authorizeUrl = "https://api.twitter.com/oauth/authorize"
     accessTokenUrl = "https://api.twitter.com/oauth/access_token"
     homeTimelineEndpoint = "https://api.twitter.com/1.1/statuses/home_timeline.json?count=200"
+    mentionTimelineEndpoint = "https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=200"
+    userTimelineEndpoint = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=200"
     trendEndpoint = "https://api.twitter.com/1.1/trends/place.json"
     authEndpoint = "https://api.twitter.com/oauth2/token"
 
@@ -74,10 +76,12 @@ proc newTwitter*(apiKey:string, apiSecret:string, accessToken:string, accessToke
     let tokens = getAccessToken(tw.apiKey, tw.apiSecret)
     tw.accessToken = tokens["accessToken"]
     tw.accessTokenSecret = tokens["accessTokenSecret"]
+    discard setConfig("auth", "accessToken", tw.accessToken)
+    discard setConfig("auth", "accessTokenSecret", tw.accessTokenSecret)
   tw.bearerToken = getBearerToken(tw.apiKey, tw.apiSecret)
   return tw
 
-proc getTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
+proc getHomeTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
   let client = newHttpClient()
   var url: string
   if sinceId == "":
@@ -101,3 +105,31 @@ iterator getTweetIter*(tw:Twitter):Tweet =
     tweetObj.profileImageUrlHttps = tw.tweets[i]["user"]["profile_image_url_https"].getStr()
     tw.sinceId = tw.tweets[i]["id_str"].getStr()
     yield tweetObj
+
+proc getMentionTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
+  let client = newHttpClient()
+  var url: string
+  if sinceId == "":
+    url = mentionTimelineEndpoint
+  else:
+    url = mentionTimelineEndpoint & "&since_id=" & sinceId
+  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  try:
+    tw.tweets = parseJson(timeline.body)
+  except JsonParsingError:
+    echo timeline.headers
+    echo timeline.body
+
+proc getUserTimeline*(tw:Twitter, username: string, sinceId: string = ""):JsonNode =
+  let client = newHttpClient()
+  var url: string
+  if sinceId == "":
+    url = mentionTimelineEndpoint & "&screen_name=" & username
+  else:
+    url = mentionTimelineEndpoint & "screen_name=" & username & "&since_id=" & sinceId
+  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  try:
+    tw.tweets = parseJson(timeline.body)
+  except JsonParsingError:
+    echo timeline.headers
+    echo timeline.body

@@ -15,3 +15,9 @@ proc getConfig*():Config =
  result.accessToken = cfg.getSectionValue("auth", "accessToken")
  result.accessTokenSecret = cfg.getSectionValue("auth", "accessTokenSecret")
 
+proc setConfig*(section: string, key: string, value: string):Config =
+  var cfg = loadConfig("settings.cfg")
+  cfg.setSectionKey(section, key, value)
+  cfg.writeConfig("settings.cfg")
+  return getConfig()
+
