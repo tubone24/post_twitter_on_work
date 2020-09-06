@@ -17,5 +17,4 @@ proc formatTweet*(tweet: Tweet) =
   block:
     let header = tweet.name & "(@" & tweet.screenName & ") at " & dateFormat(tweet.createdAt)
     styledWriteLine(stdout, fgBlack, bgGreen, header, resetStyle)
-    echo header
     echo indent(wrapWords(tweet.text), 4)
