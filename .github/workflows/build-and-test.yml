@@ -2,6 +2,8 @@ name: Build and Test
 
 on:
   push:
+    branches:
+      - '*'
     tags-ignore:
       - 'v*' # version Tag push use release workflow
 
