@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: tubone24/setup-nim-action@v1.0.1
+      - name: Install Dependencies
+        run: nimble install -d --accept
+      - name: Build
+        run: nimble build -d:release
+      - name: Test
+        env:
+          TZ: Asia/Tokyo
+        run: nimble test
+      - name: get version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: release upload url
+        id: release_url
+        run: |
+          echo ::set-output name=URL::$(echo ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/${GITHUB_REF/refs\/tags\//})
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.release_url.outputs.URL }}
+          asset_path: ./bin/post_twitter_on_work
+          asset_name: post_twitter_on_work_ubuntu_latest_${{ steps.get_version.outputs.VERSION }}
+          asset_content_type: application/octet-stream
