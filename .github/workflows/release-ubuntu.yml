@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         with:
-          upload_url: ${{ steps.release_url.outputs.URL }}
+          upload_url: ${{ steps.release_url.outputs.URL }}/assets{?name,label}
           asset_path: ./bin/post_twitter_on_work
           asset_name: post_twitter_on_work_ubuntu_latest_${{ steps.get_version.outputs.VERSION }}
           asset_content_type: application/octet-stream
