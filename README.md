@@ -1,6 +1,6 @@
 # post_twitter_on_work
 
-[![Actions Status](https://github.com/tubone24/post_twitter_on_work/workflows/Build%20Nim/badge.svg)](https://github.com/tubone24/post_twitter_on_work/actions)
+[![Actions Status](https://github.com/tubone24/post_twitter_on_work/workflows/Build%20and%20Test/badge.svg)](https://github.com/tubone24/post_twitter_on_work/actions)
 
 > If you use it, you can watch Twitter on work.
 

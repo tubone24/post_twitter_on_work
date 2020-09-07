@@ -144,7 +144,7 @@ proc getUserTimeline*(tw:Twitter, username: string, sinceId: string = ""):JsonNo
     echo timeline.headers
     echo timeline.body
 
-proc getTrend*(tw:Twitter, placeId: string):JsonNode =
+proc getTrend*(tw:Twitter, placeId: string = "1"):JsonNode =
   let client = newHttpClient()
   let url = trendEndpoint & "?id=" & placeId
   let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)

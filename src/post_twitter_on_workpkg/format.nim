@@ -5,7 +5,7 @@ proc wrapWords*(str: string, wrapLen: int = 100): string =
   var wrappedWord: seq[Rune]
   for s in countup(0, rune.len, wrapLen):
     if s + wrapLen < rune.len:
-      wrappedWord = wrappedWord & rune[s..s + wrapLen]
+      wrappedWord = wrappedWord & rune[s..s + wrapLen - 1] & "\n".toRunes
     else:
       wrappedWord = wrappedWord & rune[s..rune.len - 1]
   return $wrappedWord

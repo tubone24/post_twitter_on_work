@@ -5,3 +5,6 @@ htmldocs/
 bin
 .idea
 settings.cfg
+tests/*
+!tests/*.*
+tests/*.exe

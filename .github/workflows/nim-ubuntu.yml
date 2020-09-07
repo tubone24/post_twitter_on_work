@@ -1,4 +1,4 @@
-name: Build Nim
+name: Build and Test
 
 on:
   push:
@@ -15,28 +15,7 @@ jobs:
         run: nimble install -d --accept
       - name: Build
         run: nimble build -d:release
-      - name: release version
-        id: release_version
-        run: |
-          echo ::set-output name=version::$(date "+%Y%m%d_%H%M%S")
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Test
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        with:
-          tag_name: ${{ steps.release_version.outputs.version }}
-          release_name: Release ${{ steps.release_version.outputs.version }}
-          body: |
-            Release with GitHub Actions: ${{ steps.release_version.outputs.version }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bin/post_twitter_on_work
-          asset_name: post_twitter_on_work_ubuntu_latest
-          asset_content_type: application/octet-stream
+          TZ: Asia/Tokyo
+        run: nimble test
