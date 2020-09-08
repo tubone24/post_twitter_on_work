@@ -27,18 +27,18 @@ jobs:
   upload-release:
     runs-on: ubuntu-latest
     needs: build
-      strategy:
-        matrix:
-          include:
-            - os: ubuntu-latest
-              asset_name_suffix: ''
-              asset_content_type: application/octet-stream
-            - os: windows-latest
-              asset_name_suffix: .exe
-              asset_content_type: application/octet-stream
-            - os: macOS-latest
-              asset_name_suffix: ''
-              asset_content_type: application/octet-stream
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset_name_suffix: ''
+            asset_content_type: application/octet-stream
+          - os: windows-latest
+            asset_name_suffix: .exe
+            asset_content_type: application/octet-stream
+          - os: macOS-latest
+            asset_name_suffix: ''
+            asset_content_type: application/octet-stream
     steps:
       - name: get version
         id: get_version
