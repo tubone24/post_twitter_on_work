@@ -10,6 +10,7 @@ const
     trendEndpoint = "https://api.twitter.com/1.1/trends/place.json"
     searchEndpoint = "https://api.twitter.com/1.1/search/tweets.json?count=100"
     updateTweetEndpoint = "https://api.twitter.com/1.1/statuses/update.json"
+    listListEndpoint = "https://api.twitter.com/1.1/lists/list.json"
     authEndpoint = "https://api.twitter.com/oauth2/token"
 
 type
@@ -22,6 +23,7 @@ type
     tweets*: JsonNode
     searches*: JsonNode
     trends*: JsonNode
+    lists*: JsonNode
     sinceId*: string
   Tweet* = ref object of RootObj
     createdAt*: string
@@ -35,6 +37,17 @@ type
     promotedContent*: string
     query*: string
     tweetVolume*: int
+  List* = ref object of RootObj
+    name*: string
+    slug*: string
+    createdAt*: string
+    uri*: string
+    fullName*: string
+    description*: string
+    id*: string
+    subscriberCount*: int
+    memberCount*: int
+    mode*: string
 
 
 proc parseResponseBody(body: string): Table[string, string] =
@@ -197,3 +210,28 @@ proc postTweet*(tw:Twitter, text: string): string {.discardable.} =
     return "Success Post"
   else:
     return resp.status
+
+proc getListList*(tw:Twitter, screenName: string):JsonNode =
+  let client = newHttpClient()
+  let url = listListEndpoint & "?screen_name=" & screenName
+  let lists = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  try:
+    tw.lists = parseJson(lists.body)
+  except JsonParsingError:
+    echo lists.headers
+    echo lists.body
+
+iterator gettListListIter*(tw:Twitter):List =
+  for i in countdown(tw.lists.len - 1, 0):
+    let listObj = new List
+    listObj.name = tw.lists[i]["name"].getStr()
+    listObj.createdAt = tw.lists[i]["created_at"].getStr()
+    listObj.slug = tw.lists[i]["slug"].getStr()
+    listObj.uri = tw.lists[i]["uri"].getStr()
+    listObj.fullName = tw.lists[i]["full_name"].getStr()
+    listObj.description = tw.lists[i]["description"].getStr()
+    listObj.id = tw.lists[i]["id"].getStr()
+    listObj.subscriberCount = tw.lists[i]["subscriber_count"].getInt()
+    listObj.memberCount = tw.lists[i]["member_count"].getInt()
+    listObj.mode = tw.lists[i]["mode"].getStr()
+    yield listObj

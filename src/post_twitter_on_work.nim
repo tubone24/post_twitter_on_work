@@ -8,6 +8,7 @@ Usage:
   post_twitter_on_work mention [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work user <username> [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work search <query> [-r|--resetToken] [-i|--interval=<seconds>]
+  post_twitter_on_work list <username> [-r|--resetToken]
   post_twitter_on_work post <text> [-r|--resetToken]
 
 Options:
@@ -16,6 +17,7 @@ Options:
   mention                     Get mention timeline
   user                        Get user timeline
   search                      Get twitter search
+  list                        Get twitter list
   post                        Post Tweet
   <username>                  Twitter username
   <query>                     Search query keyword
@@ -121,6 +123,16 @@ proc main() =
       conf = getConfig()
       tw = newTwitter(conf.appKey, conf.appKeySecret, conf.accessToken, conf.accessTokenSecret)
     echo(tw.postTweet($args["<text>"]))
+  if args["list"]:
+    if args["--resetToken"]:
+      discard setConfig("auth", "accessToken", "")
+      discard setConfig("auth", "accessTokenSecret", "")
+    let
+      conf = getConfig()
+      tw = newTwitter(conf.appKey, conf.appKeySecret, conf.accessToken, conf.accessTokenSecret)
+    discard tw.getListList($args["<username>"])
+    for list in tw.gettListListIter():
+      formatList(list)
 
 when isMainModule:
   main()

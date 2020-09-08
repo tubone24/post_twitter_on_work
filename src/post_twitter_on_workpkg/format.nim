@@ -18,3 +18,9 @@ proc formatTweet*(tweet: Tweet) =
     let header = tweet.name & "(@" & tweet.screenName & ") at " & dateFormat(tweet.createdAt)
     styledWriteLine(stdout, fgBlack, bgGreen, header, resetStyle)
     echo indent(wrapWords(tweet.text), 4)
+
+proc formatList*(list: List) =
+  block:
+    echo list.slug & "(" & list.fullName & "): " & list.mode & " - " & list.uri
+    echo "    " & list.description
+    echo ""
