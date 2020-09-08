@@ -26,7 +26,7 @@ jobs:
         run: nimble test
   upload-release:
     runs-on: ubuntu-latest
-      needs: build
+    needs: build
       strategy:
         matrix:
           include:
