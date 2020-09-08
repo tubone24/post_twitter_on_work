@@ -9,22 +9,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macOS-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: tubone24/setup-nim-action@v1.0.1
-      - name: Install Dependencies
-        run: nimble install -d --accept
-      - name: Build
-        run: nimble build -d:release
-  upload-release:
-    runs-on: ubuntu-latest
-    needs: build
-    strategy:
-      matrix:
         include:
           - os: ubuntu-latest
             asset_name_suffix: ''
@@ -36,6 +20,12 @@ jobs:
             asset_name_suffix: ''
             asset_content_type: application/octet-stream
     steps:
+      - uses: actions/checkout@v1
+      - uses: tubone24/setup-nim-action@v1.0.1
+      - name: Install Dependencies
+        run: nimble install -d --accept
+      - name: Build
+        run: nimble build -d:release
       - name: get version
         id: get_version
         run: |
