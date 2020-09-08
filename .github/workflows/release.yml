@@ -20,10 +20,6 @@ jobs:
         run: nimble install -d --accept
       - name: Build
         run: nimble build -d:release
-      - name: Test
-        env:
-          TZ: Asia/Tokyo
-        run: nimble test
   upload-release:
     runs-on: ubuntu-latest
     needs: build
