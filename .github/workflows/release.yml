@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: tubone24/setup-nim-action@v1.0.1
+      - name: Install Dependencies
+        run: nimble install -d --accept
+      - name: Build
+        run: nimble build -d:release
+      - name: Test
+        env:
+          TZ: Asia/Tokyo
+        run: nimble test
+  upload-release:
+    runs-on: ubuntu-latest
+      needs: build
+      strategy:
+        matrix:
+          include:
+            - os: ubuntu-latest
+              asset_name_suffix: ''
+              asset_content_type: application/octet-stream
+            - os: windows-latest
+              asset_name_suffix: .exe
+              asset_content_type: application/octet-stream
+            - os: macOS-latest
+              asset_name_suffix: ''
+              asset_content_type: application/octet-stream
+    steps:
+      - name: get version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./bin/post_twitter_on_work${{ matrix.asset_name_suffix }}
+          asset_name: post_twitter_on_work_${{ runner.os }}_${{ steps.get_version.outputs.VERSION }}${{ matrix.asset_name_suffix }}
+          asset_content_type: ${{ matrix.asset_content_type }}
