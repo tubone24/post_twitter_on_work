@@ -61,4 +61,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          body: ${{ steps.generate_release_note.outputs.RELEASENOTE }}
+          body: |
+            $(cat ./changelog.md)
