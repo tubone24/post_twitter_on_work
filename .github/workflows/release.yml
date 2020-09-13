@@ -62,4 +62,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           body: |
-            $(cat ./changelog.md)
+            ${{ steps.generate_release_note.outputs.RELEASENOTE }}
