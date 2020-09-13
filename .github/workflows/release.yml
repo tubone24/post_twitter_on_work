@@ -55,7 +55,7 @@ jobs:
           chmod +x git-chglog_linux_amd64
           mv git-chglog_linux_amd64 git-chglog
           ./git-chglog --output ./changelog.md $(git describe --tags $(git rev-list --tags --max-count=1))
-          echo ::set-output name=RELEASENOTE::$(echo ./changelog.md)
+          echo ::set-output name=RELEASENOTE::$(cat ./changelog.md)
       - name: Update Release Body
         uses: tubone24/update_release@v1.0
         env:
