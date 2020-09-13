@@ -30,17 +30,19 @@ jobs:
         id: get_version
         run: |
           echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.0
+      - name: update release
+        id: update_release
+        uses: tubone24/update_release@v1.0
         env:
           GITHUB_TOKEN: ${{ github.token }}
+        with:
+          body: test_body
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ steps.update_release.outputs.upload_url }}
           asset_path: ./bin/post_twitter_on_work${{ matrix.asset_name_suffix }}
           asset_name: post_twitter_on_work_${{ runner.os }}_${{ steps.get_version.outputs.VERSION }}${{ matrix.asset_name_suffix }}
           asset_content_type: ${{ matrix.asset_content_type }}
