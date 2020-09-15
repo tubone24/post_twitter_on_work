@@ -1,4 +1,4 @@
-import httpclient, json, base64, tables, oauth1, strutils, uri, config
+import httpclient, json, base64, tables, oauth1, strutils, uri, config, http
 
 const
     requestTokenUrl = "https://api.twitter.com/oauth/request_token"
@@ -111,7 +111,8 @@ proc getHomeTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
     url = homeTimelineEndpoint
   else:
     url = homeTimelineEndpoint & "&since_id=" & sinceId
-  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  # let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  let timeline = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.tweets = parseJson(timeline.body)
   except JsonParsingError:
@@ -136,7 +137,7 @@ proc getMentionTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
     url = mentionTimelineEndpoint
   else:
     url = mentionTimelineEndpoint & "&since_id=" & sinceId
-  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  let timeline = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.tweets = parseJson(timeline.body)
   except JsonParsingError:
@@ -150,7 +151,7 @@ proc getUserTimeline*(tw:Twitter, username: string, sinceId: string = ""):JsonNo
     url = userTimelineEndpoint & "&screen_name=" & username
   else:
     url = userTimelineEndpoint & "&screen_name=" & username & "&since_id=" & sinceId
-  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  let timeline = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.tweets = parseJson(timeline.body)
   except JsonParsingError:
@@ -160,7 +161,7 @@ proc getUserTimeline*(tw:Twitter, username: string, sinceId: string = ""):JsonNo
 proc getTrend*(tw:Twitter, placeId: string = "1"):JsonNode =
   let client = newHttpClient()
   let url = trendEndpoint & "?id=" & placeId
-  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  let timeline = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.trends = parseJson(timeline.body)
   except JsonParsingError:
@@ -174,7 +175,7 @@ proc getSearch*(tw:Twitter, q: string, sinceId: string = ""):JsonNode =
     url = searchEndpoint & "&q=" & encodeUrl(q)
   else:
     url = searchEndpoint & "&q=" & encodeUrl(q) & "&since_id=" & sinceId
-  let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  let timeline = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.searches = parseJson(timeline.body)
   except JsonParsingError:
@@ -205,7 +206,7 @@ iterator getTrendsIter*(tw:Twitter):Trend =
 proc postTweet*(tw:Twitter, text: string): string {.discardable.} =
   let client = newHttpClient()
   let url = updateTweetEndpoint & "?status=" & encodeUrl(text)
-  let resp = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true, httpMethod = HttpPost)
+  let resp = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true, httpMethod = HttpPost)
   if resp.status == "200 OK":
     return "Success Post"
   else:
@@ -214,7 +215,7 @@ proc postTweet*(tw:Twitter, text: string): string {.discardable.} =
 proc getListList*(tw:Twitter, screenName: string):JsonNode =
   let client = newHttpClient()
   let url = listListEndpoint & "?screen_name=" & screenName
-  let lists = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  let lists = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.lists = parseJson(lists.body)
   except JsonParsingError:
