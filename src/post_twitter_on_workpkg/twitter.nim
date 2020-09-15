@@ -65,7 +65,7 @@ proc getBearerToken(apiKey:string, apiSecret:string):string =
     "Authorization": "Basic " & credentials
   })
   let body = "grant_type=client_credentials"
-  let response = client.request(authEndpoint, httpMethod = HttpPost, body = body)
+  let response = retryRequest(client, authEndpoint, httpMethod = HttpPost, body = body)
   let bearerToken = parseJson(response.body)["access_token"].getStr()
   return bearerToken
 
@@ -111,7 +111,6 @@ proc getHomeTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
     url = homeTimelineEndpoint
   else:
     url = homeTimelineEndpoint & "&since_id=" & sinceId
-  # let timeline = client.oAuth1Request(url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   let timeline = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
   try:
     tw.tweets = parseJson(timeline.body)
