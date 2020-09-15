@@ -15,6 +15,11 @@ jobs:
       - uses: tubone24/setup-nim-action@v1.0.1
       - name: Install Dependencies
         run: nimble install -d --accept
+      - name: Set secret file
+        env:
+          SECRET_FILE: ${{ secrets.SECRET_FILE }}
+        run: |
+          sh scripts/createBase64ToFile.sh $SECRET_FILE src/post_twitter_on_workpkg/secret.nim
       - name: Build
         run: nimble build -d:release
       - name: Test

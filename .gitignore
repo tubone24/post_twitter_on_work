@@ -8,3 +8,6 @@ settings.cfg
 tests/*
 !tests/*.*
 tests/*.exe
+
+# sectet
+secret.nim
