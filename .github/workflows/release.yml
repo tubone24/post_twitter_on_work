@@ -24,9 +24,12 @@ jobs:
       - uses: tubone24/setup-nim-action@v1.0.1
       - name: Set secret file
         env:
-          SECRET_FILE: ${{ secrets.SECRET_FILE }}
+          DEFAULT_APP_KEY: ${{ secrets.DEFAULT_APP_KEY }}
+          DEFAULT_APP_KEY_SECRET: ${{ secrets.DEFAULT_APP_KEY_SECRET }}
         run: |
-          nim c --run scripts/createBase64ToFile.nim "${SECRET_FILE}"
+          mv src/post_twitter_on_workpkg/secret.tpl.nim src/post_twitter_on_workpkg/secret.nim
+          sed -i '1s/^/$DEFAULT_APP_KEY\n/'
+          sed -i '1s/^/$DEFAULT_APP_KEY_SECRET\n/'
       - name: Install Dependencies
         run: nimble install -d --accept
       - name: Build
