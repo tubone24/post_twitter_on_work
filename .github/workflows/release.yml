@@ -25,14 +25,10 @@ jobs:
       - name: Set secret file
         env:
           SECRET_FILE: ${{ secrets.SECRET_FILE }}
-          SECRET_FILE_WIN: ${{ secrets.SECRET_FILE_WIN }}
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            echo $SECRET_FILE_WIN > base64.txt
-          else
-            echo $SECRET_FILE > base64.txt
-          fi
+          echo $SECRET_FILE > base64.txt
           nim c --run scripts/createBase64ToFile.nim
+        shell: bash
       - name: Install Dependencies
         run: nimble install -d --accept
       - name: Build
