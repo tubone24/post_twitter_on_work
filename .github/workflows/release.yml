@@ -5,6 +5,14 @@ on:
     types: [created]
 
 jobs:
+  create-secret:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set secret file
+        env:
+          SECRET_FILE: ${{ secrets.SECRET_FILE }}
+        run: |
+          nim c --run scripts/createBase64ToFile.nim ${SECRET_FILE}
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -19,17 +27,12 @@ jobs:
           - os: macOS-latest
             asset_name_suffix: ''
             asset_content_type: application/octet-stream
+    needs:
+      - create-secret
     steps:
-      - uses: actions/checkout@v1
       - uses: tubone24/setup-nim-action@v1.0.1
       - name: Install Dependencies
         run: nimble install -d --accept
-      - name: Set secret file
-        env:
-          SECRET_FILE: ${{ secrets.SECRET_FILE }}
-        run: |
-          nim c --out:createBase64ToFile scripts/createBase64ToFile.nim
-          scripts/createBase64ToFile ${SECRET_FILE}
       - name: Build
         run: nimble build -d:release
       - name: get version
@@ -52,6 +55,9 @@ jobs:
           asset_content_type: ${{ matrix.asset_content_type }}
   update-release-note:
     runs-on: ubuntu-latest
+    needs:
+      - create-secret
+      - build
     steps:
       - uses: actions/checkout@v1
       - name: Generate Release Note
