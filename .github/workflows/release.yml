@@ -5,21 +5,6 @@ on:
     types: [created]
 
 jobs:
-  create-secret:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: tubone24/setup-nim-action@v1.0.1
-      - name: Set secret file
-        env:
-          SECRET_FILE: ${{ secrets.SECRET_FILE }}
-        run: |
-          nim c --run scripts/createBase64ToFile.nim ${SECRET_FILE}
-      - name: Upload secret file
-        uses: actions/upload-artifact@v2
-        with:
-          name: secret
-          path: src/post_twitter_on_workpkg/secret.nim
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -34,16 +19,14 @@ jobs:
           - os: macOS-latest
             asset_name_suffix: ''
             asset_content_type: application/octet-stream
-    needs:
-      - create-secret
     steps:
       - uses: actions/checkout@v1
       - uses: tubone24/setup-nim-action@v1.0.1
-      - name: Download secret file
-        uses: actions/download-artifact@v2
-        with:
-          name: secret
-          path: src/post_twitter_on_workpkg/secret.nim
+      - name: Set secret file
+        env:
+          SECRET_FILE: ${{ secrets.SECRET_FILE }}
+        run: |
+          nim c --run scripts/createBase64ToFile.nim "${SECRET_FILE}"
       - name: Install Dependencies
         run: nimble install -d --accept
       - name: Build
