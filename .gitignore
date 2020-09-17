@@ -11,3 +11,9 @@ tests/*.exe
 
 # sectet
 secret.nim
+
+# scripts artifact
+createBase64ToFile
+createBase64ToFile.exe
+createFileToBase64
+createFileToBase64.exe
