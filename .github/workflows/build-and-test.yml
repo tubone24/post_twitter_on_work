@@ -19,7 +19,7 @@ jobs:
         env:
           SECRET_FILE: ${{ secrets.SECRET_FILE }}
         run: |
-          sh scripts/createBase64ToFile.sh $SECRET_FILE src/post_twitter_on_workpkg/secret.nim
+          nim c --run scripts/createBase64ToFile.nim $SECRET_FILE
       - name: Build
         run: nimble build -d:release
       - name: Test
