@@ -43,6 +43,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: secret
+          path: src/post_twitter_on_workpkg/secret.nim
       - name: Install Dependencies
         run: nimble install -d --accept
       - name: Build
