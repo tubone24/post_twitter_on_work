@@ -9,5 +9,5 @@ proc sleepSeveralSeconds*(seconds: int) {.discardable.} =
 proc removeUserAtmark*(str: string): string =
   return str.strip(trailing = false, chars = {'@'})
 
-proc exponentialBackoff(n: int): int =
+proc exponentialBackoff*(n: int): int =
    return 2 ^ n - 1

@@ -82,14 +82,14 @@ proc main() =
     let
       conf = getConfig()
       tw = newTwitter(conf.appKey, conf.appKeySecret, conf.accessToken, conf.accessTokenSecret)
-      tweets = tw.getUserTimeline($args["<username>"])
+      tweets = tw.getUserTimeline(removeUserAtmark($args["<username>"]))
     if args["--interval"]:
       let sleepInterval = parseInt($args["--interval"])
       for tweet in tw.getTweetIter():
         formatTweet(tweet)
       while true:
         sleepSeveralSeconds(sleepInterval)
-        let tweets = tw.getUserTimeline($args["<username>"], tw.sinceId)
+        let tweets = tw.getUserTimeline(removeUserAtmark($args["<username>"]), tw.sinceId)
         for tweet in tw.getTweetIter():
           formatTweet(tweet)
     else:
@@ -130,7 +130,7 @@ proc main() =
     let
       conf = getConfig()
       tw = newTwitter(conf.appKey, conf.appKeySecret, conf.accessToken, conf.accessTokenSecret)
-    discard tw.getListList($args["<username>"])
+    discard tw.getListList(removeUserAtmark($args["<username>"]))
     for list in tw.gettListListIter():
       formatList(list)
 
