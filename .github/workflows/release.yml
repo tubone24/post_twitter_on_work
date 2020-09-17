@@ -28,8 +28,8 @@ jobs:
           DEFAULT_APP_KEY_SECRET: ${{ secrets.DEFAULT_APP_KEY_SECRET }}
         run: |
           mv src/post_twitter_on_workpkg/secret.tpl.nim src/post_twitter_on_workpkg/secret.nim
-          sed -i '1s/^/$DEFAULT_APP_KEY\n/' src/post_twitter_on_workpkg/secret.nim
-          sed -i '1s/^/$DEFAULT_APP_KEY_SECRET\n/' src/post_twitter_on_workpkg/secret.nim
+          sed -i '1s/^/${DEFAULT_APP_KEY}\n/' src/post_twitter_on_workpkg/secret.nim
+          sed -i '1s/^/${DEFAULT_APP_KEY_SECRET}\n/' src/post_twitter_on_workpkg/secret.nim
       - name: Install Dependencies
         run: nimble install -d --accept
       - name: Build
