@@ -32,6 +32,7 @@ jobs:
     needs:
       - create-secret
     steps:
+      - uses: actions/checkout@v1
       - uses: tubone24/setup-nim-action@v1.0.1
       - name: Install Dependencies
         run: nimble install -d --accept
