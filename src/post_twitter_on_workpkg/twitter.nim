@@ -27,11 +27,17 @@ type
     lists*: JsonNode
     sinceId*: string
   Tweet* = ref object of RootObj
+    id*: string
     createdAt*: string
     text*: string
+    truncated*: bool
+    source*: string
+    inReplyToStatusId*: string
     name*: string
     profileImageUrlHttps*: string
     screenName*: string
+    retweetCount*: int
+    favoriteCount*: int
   Trend* = ref object of RootObj
     name*: string
     url*: string
@@ -127,6 +133,8 @@ iterator getTweetIter*(tw:Twitter):Tweet =
     tweetObj.screenName = tw.tweets[i]["user"]["screen_name"].getStr()
     tweetObj.name = tw.tweets[i]["user"]["name"].getStr()
     tweetObj.profileImageUrlHttps = tw.tweets[i]["user"]["profile_image_url_https"].getStr()
+    tweetObj.retweetCount = tw.tweets[i]["retweet_count"].getInt()
+    tweetObj.favoriteCount = tw.tweets[i]["favorite_count"].getInt()
     tw.sinceId = tw.tweets[i]["id_str"].getStr()
     yield tweetObj
 

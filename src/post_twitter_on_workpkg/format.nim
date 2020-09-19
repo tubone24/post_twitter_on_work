@@ -18,6 +18,8 @@ proc formatTweet*(tweet: Tweet) =
     let header = tweet.name & "(@" & tweet.screenName & ") at " & dateFormat(tweet.createdAt)
     styledWriteLine(stdout, fgBlack, bgGreen, header, resetStyle)
     echo indent(wrapWords(tweet.text), 4)
+    let footer = "RT: " & $tweet.retweetCount & "  Fav: " & $tweet.favoriteCount
+    styledWriteLine(stdout, fgBlack, bgCyan, footer, resetStyle)
 
 proc formatList*(list: List) =
   block:
