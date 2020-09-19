@@ -8,7 +8,8 @@ Usage:
   post_twitter_on_work mention [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work user <username> [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work search <query> [-r|--resetToken] [-i|--interval=<seconds>]
-  post_twitter_on_work list [-u|--user=<userName>] [-s|--slug=<slugName>] [-l|--listId=<id>] [-r|--resetToken] [-i|--interval=<seconds>]
+  post_twitter_on_work list <username>
+  post_twitter_on_work showlist <username> <slugname> [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work post <text> [-r|--resetToken]
 
 Options:
@@ -19,9 +20,11 @@ Options:
   search                      Get twitter search
   list                        Get twitter list
   post                        Post Tweet
+  showlist                    Show list
   <username>                  Twitter username
   <query>                     Search query keyword
   <text>                      Tweet text
+  <slugname>                  Slug name
   -i, --interval=<seconds>    Get tweet interval (defaults 60 second)
   -r, --resetToken            Reset accessToken when change user account
 """
@@ -133,6 +136,25 @@ proc main() =
     discard tw.getListList(removeUserAtmark($args["<username>"]))
     for list in tw.gettListListIter():
       formatList(list)
-
+  if args["showlist"]:
+    if args["--resetToken"]:
+      discard setConfig("auth", "accessToken", "")
+      discard setConfig("auth", "accessTokenSecret", "")
+    let
+      conf = getConfig()
+      tw = newTwitter(conf.appKey, conf.appKeySecret, conf.accessToken, conf.accessTokenSecret)
+    var sleepInterval: int
+    if args["--interval"]:
+      sleepInterval = parseInt($args["--interval"])
+    else:
+      sleepInterval = 60
+    let tweets = tw.getListStatus(slug = $args["<slugname>"], ownerScreenName = $args["<username>"])
+    for tweet in tw.getTweetIter():
+      formatTweet(tweet)
+    while true:
+      sleepSeveralSeconds(sleepInterval)
+      let tweets = tw.getListStatus(slug = $args["<slugname>"], ownerScreenName = $args["<username>"], sinceId = tw.sinceId)
+      for tweet in tw.getSearchIter():
+        formatTweet(tweet)
 when isMainModule:
   main()
