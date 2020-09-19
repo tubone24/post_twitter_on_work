@@ -10,4 +10,7 @@ proc removeUserAtmark*(str: string): string =
   return str.strip(trailing = false, chars = {'@'})
 
 proc exponentialBackoff*(n: int): int =
-   return 2 ^ n - 1
+   if n < 0:
+     return 0
+   else:
+     return 2 ^ n - 1

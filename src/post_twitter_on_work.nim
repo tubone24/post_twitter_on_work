@@ -8,7 +8,7 @@ Usage:
   post_twitter_on_work mention [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work user <username> [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work search <query> [-r|--resetToken] [-i|--interval=<seconds>]
-  post_twitter_on_work list <username> [-r|--resetToken]
+  post_twitter_on_work list [-u|--user=<userName>] [-s|--slug=<slugName>] [-l|--listId=<id>] [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work post <text> [-r|--resetToken]
 
 Options:

@@ -43,5 +43,8 @@ proc setConfig*(section: string, key: string, value: string):TwitterConfig =
   elif os.existsFile(joinPath(getAppDir(),"settings.cfg")):
     cfg = loadConfig(joinPath(getAppDir(),"settings.cfg"))
   cfg.setSectionKey(section, key, value)
-  cfg.writeConfig("settings.cfg")
+  if os.existsFile("settings.cfg"):
+    cfg.writeConfig("settings.cfg")
+  elif os.existsFile(joinPath(getAppDir(),"settings.cfg")):
+    cfg.writeConfig(joinPath(getAppDir(),"settings.cfg"))
   return getConfig()

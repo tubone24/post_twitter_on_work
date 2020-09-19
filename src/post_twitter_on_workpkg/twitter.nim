@@ -11,6 +11,7 @@ const
     searchEndpoint = "https://api.twitter.com/1.1/search/tweets.json?count=100"
     updateTweetEndpoint = "https://api.twitter.com/1.1/statuses/update.json"
     listListEndpoint = "https://api.twitter.com/1.1/lists/list.json"
+    listStatusEndpoint = "https://api.twitter.com/1.1/lists/statuses.json?count=200"
     authEndpoint = "https://api.twitter.com/oauth2/token"
 
 type
@@ -235,3 +236,21 @@ iterator gettListListIter*(tw:Twitter):List =
     listObj.memberCount = tw.lists[i]["member_count"].getInt()
     listObj.mode = tw.lists[i]["mode"].getStr()
     yield listObj
+
+proc getListStatus*(tw:Twitter, slug: string = "", listId: string = "", sinceId = ""):JsonNode =
+  var url: string
+  if slug == "" and listId == "":
+    raise
+  elif slug == "":
+    url = listStatusEndpoint & "&list_id=" & listId
+  elif listId == "":
+    url = listStatusEndpoint & "&slug=" & slug
+  if sinceId != "":
+    url = url & "&since_id=" & sinceId
+  let client = newHttpClient()
+  let lists = retryoAuth1Request(client, url, tw.apiKey, tw.apiSecret, tw.accessToken, tw.accessTokenSecret, isIncludeVersionToHeader = true)
+  try:
+    tw.lists = parseJson(lists.body)
+  except JsonParsingError:
+    echo lists.headers
+    echo lists.body
