@@ -1,4 +1,4 @@
-import os, strutils, math
+import os, strutils, math, nre
 
 proc sleepSeveralSeconds*(seconds: int) {.discardable.} =
   for i in 0..seconds:
@@ -14,3 +14,7 @@ proc exponentialBackoff*(n: int): int =
      return 0
    else:
      return 2 ^ n - 1
+
+proc removeHtmlTag*(str: string): string =
+  return str.replace( re"""<("[^"]*"|'[^']*'|[^'">])*>""", "")
+

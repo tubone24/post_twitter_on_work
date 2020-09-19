@@ -26,6 +26,52 @@ type
     trends*: JsonNode
     lists*: JsonNode
     sinceId*: string
+  Url* = ref object of RootObj
+    url*: string
+    expandedUrl*: string
+    displayUrl*: string
+    indices*: array[2, int]
+  User* = ref object of RootObj
+    id*: string
+    name*: string
+    screenName*: string
+    location*: string
+    description*: string
+    url*: string
+    protected*: bool
+    followersCount*: int
+    friendsCount*: int
+    listedCount*: int
+    createdAt*: string
+    favouritesCount*: int
+    utcOffset*: string
+    timeZone*: string
+    geoEnabled*: bool
+    verified*: bool
+    statusesCount*: int
+    lang*: string
+    contributorsEnabled*: bool
+    isTranslator*: bool
+    isTranslationEnabled: bool
+    profileBackgroundColor*: string
+    profileBackgroundImageUrl*: string
+    profileBackgroundImageUrlHttps*: string
+    profileBackgroundTile*: string
+    profileImageUrl*: string
+    profileImageUrlHttps*: string
+    profileBannerUrl*: string
+    profileLinkColor*: string
+    profileSidebarBorderColor*: string
+    profileSidebarFillColor*: string
+    profileTextColor*: string
+    profileUseBackgroundImage*: bool
+    hasExtendedProfile*: bool
+    defaultProfile*: bool
+    defaultProfileImage*: bool
+    following*: bool
+    followRequestSent*: bool
+    notifications*: bool
+    translatorType*: string
   Tweet* = ref object of RootObj
     id*: string
     createdAt*: string
@@ -33,11 +79,21 @@ type
     truncated*: bool
     source*: string
     inReplyToStatusId*: string
-    name*: string
-    profileImageUrlHttps*: string
-    screenName*: string
+    inReplyToUserId*: string
+    inReplyToScreenName*:string
+    geo*: bool
+    coordinates*: string
+    place*: string
+    contributors*: string
+    isQuoteStatus*: bool
+    favorited*: bool
+    retweeted*: bool
+    possiblySensitive*: bool
+    possiblySensitiveAppealable*: string
     retweetCount*: int
     favoriteCount*: int
+    lang*: string
+    user*: User
   Trend* = ref object of RootObj
     name*: string
     url*: string
@@ -128,13 +184,16 @@ proc getHomeTimeline*(tw:Twitter, sinceId: string = ""):JsonNode =
 iterator getTweetIter*(tw:Twitter):Tweet =
   for i in countdown(tw.tweets.len - 1, 0):
     let tweetObj = new Tweet
+    let userObj = new User
+    userObj.name = tw.tweets[i]["user"]["name"].getStr()
+    userObj.screenName = tw.tweets[i]["user"]["screen_name"].getStr()
+    userObj.profileImageUrlHttps = tw.tweets[i]["user"]["profile_image_url_https"].getStr()
     tweetObj.createdAt = tw.tweets[i]["created_at"].getStr()
     tweetObj.text = tw.tweets[i]["text"].getStr()
-    tweetObj.screenName = tw.tweets[i]["user"]["screen_name"].getStr()
-    tweetObj.name = tw.tweets[i]["user"]["name"].getStr()
-    tweetObj.profileImageUrlHttps = tw.tweets[i]["user"]["profile_image_url_https"].getStr()
     tweetObj.retweetCount = tw.tweets[i]["retweet_count"].getInt()
     tweetObj.favoriteCount = tw.tweets[i]["favorite_count"].getInt()
+    tweetObj.source = tw.tweets[i]["source"].getStr()
+    tweetObj.user = userObj
     tw.sinceId = tw.tweets[i]["id_str"].getStr()
     yield tweetObj
 
@@ -193,11 +252,13 @@ proc getSearch*(tw:Twitter, q: string, sinceId: string = ""):JsonNode =
 iterator getSearchIter*(tw:Twitter):Tweet =
   for i in countdown(tw.searches.len - 1, 0):
     let tweetObj = new Tweet
+    let userObj = new User
     tweetObj.createdAt = tw.searches["statuses"][i]["created_at"].getStr()
     tweetObj.text = tw.searches["statuses"][i]["text"].getStr()
-    tweetObj.screenName = tw.searches["statuses"][i]["user"]["screen_name"].getStr()
-    tweetObj.name = tw.searches["statuses"][i]["user"]["name"].getStr()
-    tweetObj.profileImageUrlHttps = tw.searches["statuses"][i]["user"]["profile_image_url_https"].getStr()
+    userObj.screenName = tw.searches["statuses"][i]["user"]["screen_name"].getStr()
+    userObj.name = tw.searches["statuses"][i]["user"]["name"].getStr()
+    userObj.profileImageUrlHttps = tw.searches["statuses"][i]["user"]["profile_image_url_https"].getStr()
+    tweetObj.user = userObj
     tw.sinceId = tw.searches["statuses"][i]["id_str"].getStr()
     yield tweetObj
 

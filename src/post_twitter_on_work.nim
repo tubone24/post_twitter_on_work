@@ -154,7 +154,7 @@ proc main() =
     while true:
       sleepSeveralSeconds(sleepInterval)
       let tweets = tw.getListStatus(slug = $args["<slugname>"], ownerScreenName = $args["<username>"], sinceId = tw.sinceId)
-      for tweet in tw.getSearchIter():
+      for tweet in tw.getTweetIter():
         formatTweet(tweet)
 when isMainModule:
   main()
