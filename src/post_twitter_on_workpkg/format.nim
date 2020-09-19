@@ -1,4 +1,4 @@
-import strutils, unicode, times, terminal, twitter
+import strutils, unicode, times, terminal, twitter, utils
 
 proc wrapWords*(str: string, wrapLen: int = 100): string =
   let rune = str.toRunes
@@ -15,9 +15,11 @@ proc dateFormat*(str: string): string =
 
 proc formatTweet*(tweet: Tweet) =
   block:
-    let header = tweet.name & "(@" & tweet.screenName & ") at " & dateFormat(tweet.createdAt)
+    let header = tweet.user.name & "(@" & tweet.user.screenName & ") at " & dateFormat(tweet.createdAt)
     styledWriteLine(stdout, fgBlack, bgGreen, header, resetStyle)
     echo indent(wrapWords(tweet.text), 4)
+    let footer = "RT: " & $tweet.retweetCount & "  Fav: " & $tweet.favoriteCount & "   (" & removeHtmlTag(tweet.source) & ")"
+    styledWriteLine(stdout, fgBlack, bgCyan, footer, resetStyle)
 
 proc formatList*(list: List) =
   block:

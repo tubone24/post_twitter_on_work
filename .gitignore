@@ -17,3 +17,6 @@ createBase64ToFile
 createBase64ToFile.exe
 createFileToBase64
 createFileToBase64.exe
+
+# mac
+.DS_Store
