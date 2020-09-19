@@ -33,3 +33,13 @@ suite "exponentialBackoff":
   test "test0":
     input = 0
     check exponentialBackoff(input) == 0
+
+suite "removeHtmlTag":
+  setup:
+    var input: string
+  test "testOK":
+    input = "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>"
+    check removeHtmlTag(input) == "Twitter Web App"
+  test "long text":
+    input = """<html><head><title>aaa<title></head><body>test</body></html>"""
+    check removeHtmlTag(input) == "aaatest"
