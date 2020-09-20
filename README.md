@@ -8,6 +8,16 @@
 
 Use Nim and Nimble, so you should install nim (>=1.00)
 
+## Secret file
+
+If you build this app, copy `secret.tpl.nim` to `secret.nim`
+
+```
+mv src/post_twitter_on_workpkg/secret.tpl.nim src/post_twitter_on_workpkg/secret.nim
+```
+
+## build
+
 ```
 $ nimble install -d
 $ nimble build
