@@ -75,6 +75,8 @@ Usage:
   post_twitter_on_work mention [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work user <username> [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work search <query> [-r|--resetToken] [-i|--interval=<seconds>]
+  post_twitter_on_work list <username>
+  post_twitter_on_work showlist <username> <slugname> [-r|--resetToken] [-i|--interval=<seconds>]
   post_twitter_on_work post <text> [-r|--resetToken]
 
 Options:
@@ -83,12 +85,16 @@ Options:
   mention                     Get mention timeline
   user                        Get user timeline
   search                      Get twitter search
+  list                        Get twitter list
   post                        Post Tweet
+  showlist                    Show list
   <username>                  Twitter username
   <query>                     Search query keyword
   <text>                      Tweet text
+  <slugname>                  Slug name
   -i, --interval=<seconds>    Get tweet interval (defaults 60 second)
   -r, --resetToken            Reset accessToken when change user account
+
 ```
 
 ## demo
