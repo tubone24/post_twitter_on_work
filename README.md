@@ -1,8 +1,31 @@
-# post_twitter_on_work
+# post_twitter_on_work (Twitter CLI client)
 
 [![Actions Status](https://github.com/tubone24/post_twitter_on_work/workflows/Build%20and%20Test/badge.svg)](https://github.com/tubone24/post_twitter_on_work/actions)
 
 > If you use it, you can watch Twitter on work.
+
+# Quick start
+
+First, download binary files as link the below. (compatible with Windows, Ubuntu, MacOS)
+
+<https://github.com/tubone24/post_twitter_on_work/releases>
+
+And you execute this binary, set your access token.
+
+```
+$ ./post_witter_on_work home
+
+Access the url, please obtain the verifier key.
+https://api.twitter.com/oauth/authorize?oauth_token=xxxxxxxxxxxxxxxxxxxxxxx
+Please enter a verifier key (PIN code).
+
+```
+
+And you try to access authorize token url (https://api.twitter.com/oauth/authorize?oauth_token=xxxxxxxxxxxxxxxxxxxxxxx)
+
+![img](./docs/images/auth.png)
+
+And set PIN code and push enter button. That's all.
 
 # Setup
 
