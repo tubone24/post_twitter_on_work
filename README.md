@@ -90,3 +90,9 @@ Options:
   -i, --interval=<seconds>    Get tweet interval (defaults 60 second)
   -r, --resetToken            Reset accessToken when change user account
 ```
+
+## demo
+
+You can watch your timeline and post tweets only CLI.
+
+![img](./docs/images/demo.gif)
