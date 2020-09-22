@@ -1,5 +1,7 @@
 # post_twitter_on_work (Twitter CLI client)
 
+![img](./docs/images/header_twitter.png)
+
 [![Actions Status](https://github.com/tubone24/post_twitter_on_work/workflows/Build%20and%20Test/badge.svg)](https://github.com/tubone24/post_twitter_on_work/actions)
 
 > If you use it, you can watch Twitter on work.
