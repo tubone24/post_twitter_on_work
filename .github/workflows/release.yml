@@ -21,7 +21,7 @@ jobs:
             asset_content_type: application/octet-stream
     steps:
       - uses: actions/checkout@v2
-      - uses: jiro4989/setup-nim-action@v1.3.15
+      - uses: jiro4989/setup-nim-action@v1.5.1
       - name: Set secret file
         env:
           SECRET_FILE: ${{ secrets.SECRET_FILE }}
